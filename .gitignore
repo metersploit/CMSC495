@@ -1,0 +1,39 @@
+# ----- Compiled Java output -----
+*.class
+target/        # Maven build dir
+build/         # Gradle build dir
+bin/           # Eclipse / VS Code output
+out/           # IntelliJ output
+
+# ----- Build tool dirs -----
+.gradle/
+.mvn/wrapper/maven-wrapper.jar
+
+# ----- Secrets / config (DO NOT COMMIT) -----
+config.properties
+db.properties
+*.env
+.env
+
+# ----- IDE files -----
+# IntelliJ
+.idea/
+*.iml
+# Eclipse
+.classpath
+.project
+.settings/
+# NetBeans
+nbproject/private/
+dist/
+# VS Code
+.vscode/
+
+# ----- OS files -----
+.DS_Store          # macOS
+Thumbs.db          # Windows
+Desktop.ini        # Windows
+
+# ----- Logs / temp -----
+*.log
+*.tmp
