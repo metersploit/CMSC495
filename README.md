@@ -1,10 +1,15 @@
 # Class Registration System
 
-The code is written in Python and uses a SQLite database. It is organized into
-layers, and a request flows through them in order:
+A student course-registration for CMSC 495.
+Students can create an account, log in, search for classes, add and drop
+classes, and view their schedule. Every user submission is validated before it
+reaches the database..
+
+The code is written in Python and uses a SQLite database with a Flask web front
+end. It is organized into layers, and a request flows through them in order:
 
 ```
-ui  ->  validator  ->  service  ->  dao  ->  db
+browser  ->  Flask (app.py)  ->  validator  ->  service  ->  dao  ->  db
 ```
 
 with `models` as the plain data objects passed between the layers.
@@ -12,80 +17,109 @@ with `models` as the plain data objects passed between the layers.
 ## Project layout
 
 ```
-registration-system/
-├── models/      data objects shared across layers
-├── db/          database connection + schema builder
-├── dao/         data-access layer (CRUD)
-├── service/     backend business logic
-├── validator/   input-validation middleware
-└── ui/          front-end screens
+src/                    (project root — run all commands from here)
+├── app.py              Flask routes (the web UI)
+├── seed.py             inserts sample courses + a test student
+├── requirements.txt    Python dependencies (Flask)
+├── templates/          HTML pages rendered by Flask
+│   ├── base.html
+│   ├── register.html
+│   ├── login.html
+│   ├── courses.html
+│   └── schedule.html
+├── models/             data objects shared across layers
+├── db/                 database connection, schema builder, the .db file
+├── dao/                data-access layer (CRUD)
+├── service/            backend business logic
+├── validator/          input-validation middleware
+└── ui/                 abstract View (desktop UI — NOT used by the web app)
 ```
+
+## Web layer (app.py + templates/)
+
+The Flask app is the front end. Each route (`/register`, `/login`, `/logout`,
+`/courses`, `/enroll/<id>`, `/drop/<id>`, `/schedule`) handles a request by
+calling the matching `Validator` method and rendering an HTML template. Login
+state is kept in the Flask session, and a fresh database connection is opened
+per request (SQLite connections can't be shared across the server's threads).
+Pages use semantic HTML styled by Pico.css from a CDN, so they look clean with
+no custom CSS.
 
 ## models/
 
 Plain data classes (Python `dataclass`es) that mirror the database tables and
 are passed between layers: `Student`, `Course` (with a `has_available_seats`
-helper), and `Enrollment`. They hold data only.
+helper), and `Enrollment`. Data only — no database or UI logic.
 
 ## db/
 
-`DatabaseConnection` is a  wrapper around a single SQLite connection;
-it sets `row_factory` so rows can be read by column name and turns on foreign-key
-enforcement on every connection. `build_db.py` creates the `students`,
-`courses`, and `enrollment` tables, including a default seat count
-(`num_enrolled NOT NULL DEFAULT 0`) and a `UNIQUE(student_id, course_id)`
-constraint so a student can't enroll in the same course twice. Run it once
-before first use. The path is anchored to this folder, so the builder and the
-connection always use the same database file.
+`DatabaseConnection` is a singleton wrapper around a SQLite connection; it sets
+`row_factory` so rows read by column name and enables foreign-key enforcement on
+every connection. `build_db.py` creates the `students`, `courses`, and
+`enrollment` tables, including `num_enrolled NOT NULL DEFAULT 0` and a
+`UNIQUE(student_id, course_id)` constraint so a student can't enroll in the same
+course twice. The database file `registration_app.db` lives in this folder, and
+the path is anchored to the folder so the builder and the app always use the
+same file.
 
 ## dao/
 
-The data-access layer. `DataAccessObject` is the generic interface
-(`insert_row`, `find_row`, `update_row`, `delete_row`). `BaseDAO` implements that
-contract a single time using small per-table hooks (table name, columns,
-object/row mapping), so `StudentDAO`, `CourseDAO`, and `EnrollmentDAO` only add
-their table specifics plus a few specialized queries—`find_by_email` (login),
-`search` (course lookup), and `find_by_student` / `find_active` (schedule and
-drop). DAO write methods execute SQL but do not commit; the service owns the
-transaction boundary.
+The data-access layer. `DataAccessObject` is the generic CRUD interface.
+`BaseDAO` implements it once using per-table hooks, so `StudentDAO`,
+`CourseDAO`, and `EnrollmentDAO` only add their table specifics plus specialized
+queries (`find_by_email`, `search`, `find_by_student`, `find_active`). DAO write
+methods execute SQL but do **not** commit; the service owns the transaction.
 
 ## service/
 
-`BackendController` is the backend that the front end ultimately calls. It
-applies various rules (course-capacity check, duplicate-enrollment guard),
-hashes and verifies passwords, and wraps multi-step writes such as enroll and
-drop in a transaction so the seat count can't doesn't. Operations that fail (course full, already enrolled, bad credentials) raise
+`BackendController` is the backend facade. It applies the business rules
+(capacity check, duplicate-enrollment guard), hashes and verifies passwords, and
+wraps enroll/drop in a transaction so the seat count can't drift. Business
+failures (course full, already enrolled, bad credentials) raise
 `RegistrationError`.
 
 ## validator/
 
-`Validator` is the middleware between the UI and the backend. It checks that
-input is complete and well formed, rejects bad input with a per-field
+`Validator` is the middleware between the web layer and the backend. It checks
+that input is complete and well formed, rejects bad input with a per-field
 `ValidationError` (so invalid data never reaches the database), and forwards
-valid requests to `BackendController`. This is the layer that realizes the
-project's frontend-to-backend validation requirement.
+valid requests to `BackendController`.
 
 ## ui/
 
-The front-end screens. `View` is the abstract base for every screen: it holds
-the `Validator` and the logged-in student, declares the framework-specific
-methods each screen must implement (`render`, `show_error`, `show_message`), and
-provides the shared `report_validation_error` loop that displays every field
-error at once. The concrete screens (`LoginView`, `CreateAccountView`,
-`SearchCoursesView`, `AddDropCoursesView`, `ScheduleView`) and the
-`UserInterface` that displays them build on `View`. The GUI framework has not
-been chosen yet, so `View` is framework-neutral.
+`View` is an abstract base for a desktop (Tkinter) UI. It is **not used by the
+Flask web app** and is kept only in case a desktop build is added later. Because
+the backend is decoupled, a desktop UI and the web app could share the same
+`service`/`dao`/`db` code.
 
 ## Errors
 
-Two exception types flow back to the UI:
+Two exception types flow back to the front end:
 
 - `ValidationError` (from `validator/`) — field-level input problems; carries a
-  `field → message` map so each input can be flagged.
+  `field -> message` map so each input can be flagged.
 - `RegistrationError` (from `service/`) — business problems such as a full
   course or duplicate enrollment.
 
 ## Running
 
-1. Build the database once: `python3 db/build_db.py`
-2. Nothing else because it hasn't been implemented yet.
+Run everything from the project root (`src/`) so the package imports resolve:
+
+1. Install dependencies: `pip install -r requirements.txt`
+2. Build the database (once): `python3 db/build_db.py`
+3. Add sample data: `python3 seed.py`
+4. Start the app: `python3 app.py`
+5. Open `http://127.0.0.1:5000` and log in with the seeded test account:
+   `test@umgc.edu` / `password123`
+
+Notes:
+
+- Re-running `seed.py` is safe — it skips courses if any already exist and skips
+  the test student if the email is taken.
+- To reset to a clean state, delete `db/registration_app.db` and repeat steps
+  2-3.
+- If port 5000 is in use (on macOS, AirPlay uses it), change the last line of
+  `app.py` to `app.run(debug=True, port=5001)` and open that port instead.
+- The `secret_key` in `app.py` signs the login session cookie. Use a real random
+  value and keep it out of version control (environment variable or an ignored
+  config file).
