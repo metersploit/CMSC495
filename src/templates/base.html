@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Class Registration</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <nav class="container">
+    <ul><li><strong>Class Registration</strong></li></ul>
+    <ul>
+      {% if session.get('student_id') %}
+        <li><a href="{{ url_for('courses') }}">Courses</a></li>
+        <li><a href="{{ url_for('schedule') }}">My schedule</a></li>
+        <li><a href="{{ url_for('logout') }}">Log out</a></li>
+      {% else %}
+        <li><a href="{{ url_for('login') }}">Log in</a></li>
+        <li><a href="{{ url_for('register') }}">Create account</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  <main class="container">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for m in messages %}<article>{{ m }}</article>{% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
