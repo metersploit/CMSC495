@@ -1,10 +1,15 @@
 import sqlite3
+from pathlib import Path
+
+# Anchored to this file's folder so it always builds the same db/ file,
+# no matter where you run the script from.
+DB_PATH = Path(__file__).resolve().parent / "registration_app.db"
+
 
 def build_db() -> None:
-    with sqlite3.connect("../../db/registration_app.db") as connect:
-        
-        cursor = connect.cursor()
+    with sqlite3.connect(DB_PATH) as connect:
         connect.execute("PRAGMA foreign_keys = ON;")
+        cursor = connect.cursor()
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS students (
@@ -16,7 +21,6 @@ def build_db() -> None:
                 password_hash TEXT NOT NULL
             )
         """)
-        
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS courses (
@@ -25,20 +29,22 @@ def build_db() -> None:
                 course_number TEXT NOT NULL,
                 instructor TEXT NOT NULL,
                 capacity INTEGER NOT NULL,
-                num_enrolled INTEGER
+                num_enrolled INTEGER NOT NULL DEFAULT 0
             )
         """)
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS enrollment (
                 enrollment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                student_id INTEGER REFERENCES students(student_id),
-                course_id INTEGER REFERENCES courses(course_id)
+                student_id INTEGER NOT NULL REFERENCES students(student_id),
+                course_id INTEGER NOT NULL REFERENCES courses(course_id),
+                UNIQUE (student_id, course_id)
             )
         """)
 
-        cursor.execute(";")
-    connect.close()
+        connect.commit()
+
 
 if __name__ == "__main__":
     build_db()
+    print(f"Database built at {DB_PATH}")
