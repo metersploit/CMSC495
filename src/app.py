@@ -8,7 +8,7 @@ from service.backend_controller import BackendController, RegistrationError
 from validator import Validator, ValidationError
 
 app = Flask(__name__)
-app.secret_key = "change-this-to-a-random-secret"
+app.secret_key = "c76699dc-c1d3-493c-9388-9714df3654a4"
 
 
 def get_validator() -> Validator:
