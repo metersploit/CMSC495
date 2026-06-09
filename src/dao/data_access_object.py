@@ -1,8 +1,11 @@
-# Generic Data Access Object interface.
+# Filename: data_access_object.py
 #
-# The concrete subclasses are bound to a single object of type
-# T and its table, so the the table is fixed by the subclass rather than
-# passed each function call.
+# Description: This script provides a generic, abstract class that serves as the
+# contract for DAO subclasses. The concrete subclasses are bound to a single
+# object of type T and its table, so the the table is fixed by the subclass
+# rather than passed each function call.
+#
+# Parent: None
 
 from typing import Generic, Optional, TypeVar
 from abc import ABC, abstractmethod
@@ -26,7 +29,3 @@ class DataAccessObject(ABC, Generic[T]):
     @abstractmethod
     def delete_row(self, table_name: str) -> None:
         """Delete a row in a table."""
-
-    def exists(self, record_id: int) -> bool:
-        """Concrete method to determine if a record exists."""
-        return self.find_row(record_id) is not None

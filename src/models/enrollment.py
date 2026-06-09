@@ -1,3 +1,10 @@
+# Filename: enrollment.py
+#
+# Description: This script provides a class for data in enrollments. It is a data
+# only class. 
+#
+# Parent: None
+
 from dataclasses import dataclass
 from typing import Optional
 

@@ -1,3 +1,4 @@
+# Currently not in use. Remove this line if it gets used.
 # Abstract base for every screen in the application
 
 from abc import ABC, abstractmethod

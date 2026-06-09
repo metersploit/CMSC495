@@ -1,3 +1,11 @@
+# Filename: student_dao.py
+#
+# Description: The class operates on the students table in the database. It
+# implements the abstract subroutines from its parent and allows for searching
+# for a student by email address.
+#
+# Parent: BaseDAO
+
 import sqlite3
 from typing import Optional, Sequence
 
@@ -38,7 +46,7 @@ class StudentDAO(BaseDAO[Student]):
     def set_id(self, record: Student, record_id: int) -> None:
         record.student_id = record_id
 
-    # this should be used for login functionality only
+    # Search for a student by email address. Intended for login functionality.
     def find_by_email(self, email: str) -> Optional[Student]:
         sql = "SELECT * FROM students WHERE email = ?"
         row = self._conn.execute(sql, (email,)).fetchone()

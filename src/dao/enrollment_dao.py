@@ -1,3 +1,11 @@
+# Filename: enrollment_dao.py
+#
+# Description: The class operates on the enrollment table in the database. It
+# implements the abstract subroutines from its parent and also allows for searching
+# for a student's schedule.
+#
+# Parent: BaseDAO
+
 import sqlite3
 from typing import Optional, Sequence
 
@@ -33,14 +41,15 @@ class EnrollmentDAO(BaseDAO[Enrollment]):
     def set_id(self, record: Enrollment, record_id: int) -> None:
         record.enrollment_id = record_id
 
+    # Search by student ID. Returns all enrolled classes.
     def find_by_student(self, student_id: int) -> list[Enrollment]:
-        """All enrollments for a student (used to build the schedule)."""
         sql = "SELECT * FROM enrollment WHERE student_id = ?"
         rows = self._conn.execute(sql, (student_id,)).fetchall()
         return [self.from_row(row) for row in rows]
 
+    # Search for a student's enrollment in a course by student id and course id.
+    # Returns the row or None.
     def find_active(self, student_id: int, course_id: int) -> Optional[Enrollment]:
-        """Find a student's enrollment in a course (used when dropping)."""
         sql = "SELECT * FROM enrollment WHERE student_id = ? AND course_id = ?"
         row = self._conn.execute(sql, (student_id, course_id)).fetchone()
         return self.from_row(row) if row is not None else None

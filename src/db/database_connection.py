@@ -1,5 +1,10 @@
-# this class is a wrapper for a sqlite connection. Use it to 
-# create and close connections.
+# Filename: database_connection.py
+#
+# Description: This script provides a class that is a wrapper around a SQLite 
+# database connection. Use the subroutines to setup or tear down database 
+# connections.
+#
+# Parent: None
 
 import sqlite3
 from pathlib import Path
@@ -11,7 +16,6 @@ class DatabaseConnection:
 
     _instance: Optional["DatabaseConnection"] = None
 
-    # make sure this points to the file that was created with build_db() 
     def __init__(self, db_path: str = str(DB_PATH)) -> None:
         self._db_path = db_path
         self._connection: Optional[sqlite3.Connection] = None
