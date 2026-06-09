@@ -1,10 +1,15 @@
+# Filename: build_db.py
+#
+# Description: This script initializes a SQLite database in this directory and is 
+# part of the development environment setup. Three tables will be created 
+# which are students, courses, and enrollments. No data is added to the tables.
+#
+# Parent: none
+
 import sqlite3
 from pathlib import Path
 
-# Anchored to this file's folder so it always builds the same db/ file,
-# no matter where you run the script from.
 DB_PATH = Path(__file__).resolve().parent / "registration_app.db"
-
 
 def build_db() -> None:
     with sqlite3.connect(DB_PATH) as connect:
@@ -43,7 +48,6 @@ def build_db() -> None:
         """)
 
         connect.commit()
-
 
 if __name__ == "__main__":
     build_db()

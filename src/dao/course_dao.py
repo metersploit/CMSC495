@@ -1,3 +1,11 @@
+# Filename: course_dao.py
+#
+# Description: This class operates on the Courses table in the database. It
+# implements the abstract subroutines from its parent and allows for searching 
+# for courses by name, number, or instructor.
+#
+# Parent: BaseDAO
+
 import sqlite3
 from typing import Optional, Sequence
 
@@ -38,6 +46,7 @@ class CourseDAO(BaseDAO[Course]):
     def set_id(self, record: Course, record_id: int) -> None:
         record.course_id = record_id
 
+    # Search courses by name, number, or instructor.
     def search(self, term: str) -> list[Course]:
         query = (
             "SELECT * FROM courses "

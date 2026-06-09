@@ -1,4 +1,13 @@
-# Backend controller for validator <-> backend interfacing.
+# Filename: backend_controller.py
+#
+# Description: This script provides a class that creates the primary dataflow
+# pipeline between the front and back end. Data from the validator is handed 
+# to this class for pushing to the database. This is also where main functionalities
+# live such as account creation, authentication, enrollment, dropping, searching,
+# and schedule creation. Additionally, there are two standalone subroutines that
+# handle password hashing (SHA256 + 16-byte salting) and password checking.
+#
+# Parent: none
 
 import hashlib
 import hmac
@@ -13,19 +22,18 @@ from models.student import Student
 from models.course import Course
 from models.enrollment import Enrollment
 
-
 class RegistrationError(Exception):
     """Raised when an operation fails (course full, already enrolled,
     bad credentials, etc.). The middleware/UI catches this and shows the message
     to the user."""
 
-# standalone password hashing function. SHA256 + salt
+# Standalone password hashing function.
 def _hash_password(password: str) -> str:
     salt = os.urandom(16)
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 100_000)
     return f"{salt.hex()}${digest.hex()}"
 
-# sandalone password matching for login functionality
+# Standalone password matching for login functionality
 def _verify_password(password: str, stored: str) -> bool:
     try:
         salt_hex, hash_hex = stored.split("$")
@@ -48,7 +56,7 @@ class BackendController:
     def _conn(self):
         return self._db.get_connection()
 
-    # account creation
+    # Account creation. Returns a Student object.
     def create_account(self, first_name: str, last_name: str, email: str,
                        phone_number: Optional[str], password: str) -> Student:
         if self._students.find_by_email(email) is not None:
@@ -60,22 +68,23 @@ class BackendController:
             password_hash=_hash_password(password),
             phone_number=phone_number,
         )
-        with self._conn:                      # commit on success / rollback on error
+        with self._conn:
             self._students.insert_row(student)
         return student
 
-    # Logging in
+    # Account authentication. Returns a Student object if successful.
     def authenticate(self, email: str, password: str) -> Student:
         student = self._students.find_by_email(email)
         if student is None or not _verify_password(password, student.password_hash):
             raise RegistrationError("Invalid email or password.")
         return student
 
-    # search for courses
+    # Course searching. Returns a list of Course objects.
     def search_courses(self, term: str) -> list[Course]:
         return self._courses.search(term)
 
-    # enroll in a course
+    # Enroll in a course. Updates the enrollments table if successful or return
+    # an error string if it isnt.
     def enroll(self, student_id: int, course_id: int) -> None:
         course = self._courses.find_row(course_id)
         if course is None:
@@ -92,7 +101,7 @@ class BackendController:
             )
             self._courses.update_row(course)
 
-    # drop a course
+    # Drop a course. Updates the appropriate enrollment row.
     def drop(self, student_id: int, course_id: int) -> None:
         enrollment = self._enrollments.find_active(student_id, course_id)
         if enrollment is None:
@@ -105,7 +114,7 @@ class BackendController:
                 course.num_enrolled -= 1
                 self._courses.update_row(course)
 
-    # get a student's full schedule
+    # Get a student's schedule. Returns a list of Courses.
     def get_schedule(self, student_id: int) -> list[Course]:
         enrollments = self._enrollments.find_by_student(student_id)
         schedule = []

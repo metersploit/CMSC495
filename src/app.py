@@ -1,3 +1,11 @@
+# Filename: app.py
+#
+# Description: This is the entry point for the program and serves as the program's
+# front end. It builds a Flask app for app use in a web browser. Run the script,
+# and go to http://127.0.0.1:5000 to acccess the app in your browser.
+#
+# Parent: None
+
 from functools import wraps
 
 from flask import (Flask, g, request, session, redirect, url_for,
@@ -8,6 +16,10 @@ from service.backend_controller import BackendController, RegistrationError
 from validator import Validator, ValidationError
 
 app = Flask(__name__)
+
+# This line wouldn't exist in a prod app and would be considered sensitive, so
+# it would live as an env var and not in the repo. This is non-prod and with
+# no sensitive data to protect so its fine.
 app.secret_key = "c76699dc-c1d3-493c-9388-9714df3654a4"
 
 

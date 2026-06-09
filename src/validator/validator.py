@@ -1,3 +1,11 @@
+# Filename: validator.py
+#
+# Description: This script provides user input validation. Checks for creating
+# accounts, enrolling in couses, dropping courses, logging in, and schedule
+# queries. Errors are returned if any checks fail.
+# 
+# Parent: None.
+
 import re
 from typing import Optional
 
@@ -10,7 +18,6 @@ _PHONE_RE = re.compile(r"^[0-9+\-\s().]{7,20}$")
 MIN_PASSWORD_LENGTH = 8
 
 class ValidationError(Exception):
-    """Raised when one or more fields fail validation."""
 
     def __init__(self, errors: dict[str, str]) -> None:
         self.errors = errors
@@ -18,13 +25,11 @@ class ValidationError(Exception):
 
 
 class Validator:
-    """Checks that input is complete and well formed, then forwards valid
-    requests to the BackendController. Invalid input is rejected."""
 
     def __init__(self, controller: Optional[BackendController] = None) -> None:
         self._controller = controller or BackendController()
 
-    # Account creation checks
+    # Account creation checks. Creates an account or returns an error.
     def create_account(self, first_name: str, last_name: str, email: str,
                        phone_number: Optional[str], password: str) -> Student:
         first_name = (first_name or "").strip()
@@ -56,7 +61,7 @@ class Validator:
             first_name, last_name, email, phone_number or None, password
         )
 
-    # Login checks
+    # Login checks. Allows login or returns an error.
     def login(self, email: str, password: str) -> Student:
         email = (email or "").strip().lower()
         password = password or ""
@@ -74,34 +79,35 @@ class Validator:
 
         return self._controller.authenticate(email, password)
 
-    # Course search checks
+    # Course search checks. Seaches courses or returns an error.
     def search_courses(self, term: str) -> list[Course]:
         term = (term or "").strip()
         if not term:
             raise ValidationError({"search": "Enter a search term."})
         return self._controller.search_courses(term)
 
-    # Enroll/drop checks
+    # Enroll checks. Enrolls or returns an error.
     def enroll(self, student_id: int, course_id: int) -> None:
         self._require_ids(student_id, course_id)
         self._controller.enroll(student_id, course_id)
 
+    # Drop checks. Drops a course or returns an error
     def drop(self, student_id: int, course_id: int) -> None:
         self._require_ids(student_id, course_id)
         self._controller.drop(student_id, course_id)
 
-    # Schedule checks
+    # Schedule checks. Returns a schedule or an error.
     def get_schedule(self, student_id: int) -> list[Course]:
         if not self._is_positive_int(student_id):
             raise ValidationError({"student_id": "A valid student id is required."})
         return self._controller.get_schedule(student_id)
 
-    # Checks to make sure inputs are positive ints.
+    # Checks to make sure inputs are positive ints. Returns True if it is.
     @staticmethod
     def _is_positive_int(value) -> bool:
         return isinstance(value, int) and not isinstance(value, bool) and value > 0
 
-    # makes sure there is an id and it is valid
+    # Checks that an student or course ID exists and is valid.
     def _require_ids(self, student_id: int, course_id: int) -> None:
         errors: dict[str, str] = {}
         if not self._is_positive_int(student_id):

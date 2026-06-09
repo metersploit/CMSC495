@@ -1,11 +1,11 @@
-"""Populate the database with sample courses and a test student.
-
-Run once, after building the database:
-    python3 db/build_db.py
-    python3 seed.py
-
-it skips data that already exists.
-"""
+# Filename: seed.py
+#
+# Description: This script fills the database with dummy data. It is not strictly
+# required to run the app, but having some amount of data in the database is 
+# useful for development and debugging. Run this script after setting up the
+# database with build_db.py.
+#
+# Parent: none
 import sqlite3
 
 from db.database_connection import DatabaseConnection
@@ -21,7 +21,7 @@ SAMPLE_COURSES = [
     Course(course_name="Software Engineering", course_number="CMSC 495",
            instructor="Prof. Grace Hopper", capacity=20),
     Course(course_name="Database Systems", course_number="CMSC 461",
-           instructor="Dr. Edgar Codd", capacity=1),   # small, to test the "full" path
+           instructor="Dr. Edgar Codd", capacity=1),
     Course(course_name="Computer Networks", course_number="CMSC 451",
            instructor="Dr. Vint Cerf", capacity=40),
 ]
