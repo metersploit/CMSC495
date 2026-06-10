@@ -1,3 +1,6 @@
+If you're the Summer 2026 CMSC 495 instructor, scroll down to "Class Registration System" to see the main part of the readme. 
+If you're in group 4, the notes between here and "Class Registration System" are for you.
+
 The main branch can't be pushed to directly, so you'll need to checkout a branch
 first, make your changes, push the branch, and then open a PR.
 
@@ -7,7 +10,7 @@ cd CMSC495/
 git checkout -b your-branch-name-here
 ```
 
-Then make your changes. When you're ready to push:
+Make your changes. When you're ready to push:
 
 ```
 cd path/to/CSMSC495/
@@ -21,6 +24,18 @@ If you have set up a signing key, add `-S` to your commit command. It isn't a
 requirement for this repo, but it is very common to see in other repos, so its
 worth learning how to do.
 
+If you already have a local copy somewhere and want to work off of that instead of
+cloning every time:
+
+```
+cd path/to/CMSC495/
+git checkout main
+git pull
+git checkout -b your-branch-name-here
+```
+You might already be on the main branch and/or have an up-to-date copy of the repo
+
+
 CI/CD TODOs (if I have time)
 ```
 - PR templates
@@ -29,6 +44,7 @@ CI/CD TODOs (if I have time)
 - Enforce automated testing
 - Smoke checks
 ```
+
 # Class Registration System
 
 A student course-registration application for group 4 of CMSC 495.
