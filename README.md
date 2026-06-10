@@ -34,8 +34,7 @@ git checkout main
 git pull
 git checkout -b your-branch-name-here
 ```
-You might already be on the main branch and/or have an up-to-date copy of the repo
-
+You might already be on the main branch and/or have an up-to-date copy of the repo. If thats the case, the commands immediately above here are still safe to run, and git will report that one or both are already true.
 
 CI/CD TODOs (if I have time)
 ```
