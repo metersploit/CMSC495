@@ -38,8 +38,9 @@ You might already be on the main branch and/or have an up-to-date copy of the re
 
 CI/CD TODOs (if I have time)
 ```
-- PR templates
+- PR template (COMPLETE)
 - Linter
+- Enforce reviewer checks
 - Runner for automated testing
 - Enforce automated testing
 - Smoke checks
