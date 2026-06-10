@@ -46,6 +46,10 @@ CI/CD TODOs (if I have time)
 - Smoke checks
 ```
 
+Highly reccomended to do all development on a UNIX-like OS (MacOS, Linux of all flavors, FreeBSD, etc.) on bare
+metal or a virtual machine. If you're on Windows, check out VMWare Workstation Pro (you can get it for free), or 
+VirtualBox from Oracle (always free) to run a different OS. Or look into Windows Subsystem for Linux and run Docker containers (this is the more complex approach).
+
 # Class Registration System
 
 A student course-registration application for group 4 of CMSC 495.
