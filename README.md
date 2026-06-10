@@ -3,14 +3,14 @@ first, make your changes, push the branch, and then open a PR.
 
 ```
 git clone https://github.com/metersploit/CMSC495.git
-cd CMSC496
+cd CMSC495/
 git checkout -b your-branch-name-here
 ```
 
 Then make your changes. When you're ready to push:
 
 ```
-cd path/to/CSMSC495
+cd path/to/CSMSC495/
 git add .
 git commit -m "Write your commit message here"
 git push -u origin your-branch-name-here
