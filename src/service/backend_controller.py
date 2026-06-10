@@ -30,7 +30,7 @@ class RegistrationError(Exception):
 # Standalone password hashing function.
 def _hash_password(password: str) -> str:
     salt = os.urandom(16)
-    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 100_000)
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 600_000)
     return f"{salt.hex()}${digest.hex()}"
 
 # Standalone password matching for login functionality

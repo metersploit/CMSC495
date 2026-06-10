@@ -1,3 +1,34 @@
+The main branch can't be pushed to directly, so you'll need to checkout a branch
+first, make your changes, push the branch, and then open a PR.
+
+```
+git clone https://github.com/metersploit/CMSC495.git
+cd CMSC496
+git checkout -b your-branch-name-here
+```
+
+Then make your changes. When you're ready to push:
+
+```
+cd path/to/CSMSC495
+git add .
+git commit -m "Write your commit message here"
+git push -u origin your-branch-name-here
+```
+Then go to Pull Requests on Github (this repo) and open a PR. 
+
+If you have set up a signing key, add `-S` to your commit command. It isn't a 
+requirement for this repo, but it is very common to see in other repos, so its
+worth learning how to do.
+
+CI/CD TODOs (if I have time)
+```
+- PR templates
+- Linter
+- Runner for automated testing
+- Enforce automated testing
+- Smoke checks
+```
 # Class Registration System
 
 A student course-registration application for group 4 of CMSC 495.
