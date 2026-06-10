@@ -1,4 +1,5 @@
 If you're the Summer 2026 CMSC 495 instructor, scroll down to "Class Registration System" to see the main part of the readme. 
+
 If you're in group 4, the notes between here and "Class Registration System" are for you.
 
 The main branch can't be pushed to directly, so you'll need to checkout a branch
