@@ -24,6 +24,7 @@
           <td>
             {% if c.has_available_seats %}
               <form method="post" action="{{ url_for('enroll', course_id=c.course_id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit">Enroll</button>
               </form>
             {% else %}

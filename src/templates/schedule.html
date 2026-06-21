@@ -14,6 +14,7 @@
         <td>{{ c.instructor }}</td>
         <td>
           <form method="post" action="{{ url_for('drop', course_id=c.course_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="secondary">Drop</button>
           </form>
         </td>
