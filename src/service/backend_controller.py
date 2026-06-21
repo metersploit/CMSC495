@@ -40,7 +40,7 @@ def _verify_password(password: str, stored: str) -> bool:
     except ValueError:
         return False
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(),
-                                 bytes.fromhex(salt_hex), 100_000)
+                                 bytes.fromhex(salt_hex), 600_000)
     return hmac.compare_digest(digest.hex(), hash_hex)
 
 

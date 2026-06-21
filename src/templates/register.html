@@ -2,6 +2,7 @@
 {% block content %}
 <h2>Create account</h2>
 <form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label>First name
     <input name="first_name" value="{{ form.get('first_name', '') }}"
            {% if errors.get('first_name') %}aria-invalid="true"{% endif %}>

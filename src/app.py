@@ -10,7 +10,7 @@ from functools import wraps
 
 from flask import (Flask, g, request, session, redirect, url_for,
                    render_template, flash)
-
+from flask_wtf import CSRFProtect
 from db.database_connection import DatabaseConnection
 from service.backend_controller import BackendController, RegistrationError
 from validator import Validator, ValidationError
@@ -22,6 +22,7 @@ app = Flask(__name__)
 # no sensitive data to protect so its fine.
 app.secret_key = "c76699dc-c1d3-493c-9388-9714df3654a4"
 
+csrf = CSRFProtect(app)
 
 def get_validator() -> Validator:
     if "validator" not in g:
