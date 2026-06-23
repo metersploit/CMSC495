@@ -1,34 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Create account</h2>
-<form method="post">
+<form method="post" style="max-width: 480px;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>First name
-    <input name="first_name" value="{{ form.get('first_name', '') }}"
-           {% if errors.get('first_name') %}aria-invalid="true"{% endif %}>
-    {% if errors.get('first_name') %}<small>{{ errors['first_name'] }}</small>{% endif %}
-  </label>
-  <label>Last name
-    <input name="last_name" value="{{ form.get('last_name', '') }}"
-           {% if errors.get('last_name') %}aria-invalid="true"{% endif %}>
-    {% if errors.get('last_name') %}<small>{{ errors['last_name'] }}</small>{% endif %}
-  </label>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <label>First name
+      <input name="first_name" value="{{ form.get('first_name', '') }}"
+             placeholder="Jane"
+             {% if errors.get('first_name') %}aria-invalid="true"{% endif %}>
+      {% if errors.get('first_name') %}<small>{{ errors['first_name'] }}</small>{% endif %}
+    </label>
+    <label>Last name
+      <input name="last_name" value="{{ form.get('last_name', '') }}"
+             placeholder="Smith"
+             {% if errors.get('last_name') %}aria-invalid="true"{% endif %}>
+      {% if errors.get('last_name') %}<small>{{ errors['last_name'] }}</small>{% endif %}
+    </label>
+  </div>
+
   <label>Email
     <input name="email" type="email" value="{{ form.get('email', '') }}"
+           placeholder="you@example.com"
            {% if errors.get('email') %}aria-invalid="true"{% endif %}>
     {% if errors.get('email') %}<small>{{ errors['email'] }}</small>{% endif %}
   </label>
-  <label>Phone (optional)
+
+  <label>Phone <span style="color:#94a3b8; font-weight:400;">(optional)</span>
     <input name="phone_number" value="{{ form.get('phone_number', '') }}"
+           placeholder="555-555-5555"
            {% if errors.get('phone_number') %}aria-invalid="true"{% endif %}>
     {% if errors.get('phone_number') %}<small>{{ errors['phone_number'] }}</small>{% endif %}
   </label>
+
   <label>Password
     <input name="password" type="password"
+           placeholder="Choose a strong password"
            {% if errors.get('password') %}aria-invalid="true"{% endif %}>
     {% if errors.get('password') %}<small>{{ errors['password'] }}</small>{% endif %}
   </label>
-  <button type="submit">Create account</button>
+
+  <button type="submit" style="width: 100%; margin-top: 0.5rem;">Create account</button>
 </form>
-<p>Already have an account? <a href="{{ url_for('login') }}">Log in</a>.</p>
+<p style="margin-top: 1rem; font-size: 0.9rem; color: #64748b;">
+  Already have an account? <a href="{{ url_for('login') }}">Log in</a>.
+</p>
 {% endblock %}
