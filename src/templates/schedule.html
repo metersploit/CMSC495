@@ -1,16 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>My schedule</h2>
+<h2>My Schedule</h2>
+
 {% if courses %}
+  <p style="font-size:0.85rem; color:#64748b; margin-bottom:0.75rem;">
+    You're enrolled in {{ courses|length }} course{{ 's' if courses|length != 1 }}.
+  </p>
   <table>
     <thead>
-      <tr><th>Course</th><th>Number</th><th>Instructor</th><th></th></tr>
+      <tr>
+        <th>Course</th>
+        <th>Number</th>
+        <th>Instructor</th>
+        <th></th>
+      </tr>
     </thead>
     <tbody>
       {% for c in courses %}
       <tr>
-        <td>{{ c.course_name }}</td>
-        <td>{{ c.course_number }}</td>
+        <td><strong>{{ c.course_name }}</strong></td>
+        <td style="color:#64748b;">{{ c.course_number }}</td>
         <td>{{ c.instructor }}</td>
         <td>
           <form method="post" action="{{ url_for('drop', course_id=c.course_id) }}">
@@ -23,6 +32,9 @@
     </tbody>
   </table>
 {% else %}
-  <p>You're not enrolled in any classes yet. <a href="{{ url_for('courses') }}">Find classes</a>.</p>
+  <div style="padding: 2rem 0; text-align: center; color: #94a3b8;">
+    <p style="font-size: 1.05rem; margin-bottom: 0.5rem;">You're not enrolled in any classes yet.</p>
+    <a href="{{ url_for('courses') }}">Browse available courses &rarr;</a>
+  </div>
 {% endif %}
 {% endblock %}
