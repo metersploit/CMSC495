@@ -2,6 +2,7 @@
 {% block content %}
 <h2>Log in</h2>
 <form method="post" style="max-width: 400px;">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label>Email
     <input name="email" type="email" value="{{ form.get('email', '') }}"
            placeholder="you@example.com"
