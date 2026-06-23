@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Find classes</h2>
-<form method="get" action="{{ url_for('courses') }}">
-  <fieldset role="group">
+<h2>Find Classes</h2>
+
+<form method="get" action="{{ url_for('courses') }}" style="margin-bottom: 1.75rem;">
+  <fieldset role="group" style="max-width: 520px;">
     <input name="q" placeholder="Search by name, number, or instructor" value="{{ term }}">
     <button type="submit">Search</button>
   </fieldset>
@@ -10,25 +11,41 @@
 
 {% if term %}
   {% if courses %}
+    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 0.75rem;">
+      {{ courses|length }} result{{ 's' if courses|length != 1 }} for &ldquo;{{ term }}&rdquo;
+    </p>
     <table>
       <thead>
-        <tr><th>Course</th><th>Number</th><th>Instructor</th><th>Seats</th><th></th></tr>
+        <tr>
+          <th>Course</th>
+          <th>Number</th>
+          <th>Instructor</th>
+          <th>Seats</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
         {% for c in courses %}
         <tr>
-          <td>{{ c.course_name }}</td>
-          <td>{{ c.course_number }}</td>
+          <td><strong>{{ c.course_name }}</strong></td>
+          <td style="color:#64748b;">{{ c.course_number }}</td>
           <td>{{ c.instructor }}</td>
-          <td>{{ c.num_enrolled }}/{{ c.capacity }}</td>
+          <td>
+            <span style="font-size:0.85rem;">
+              {{ c.num_enrolled }}/{{ c.capacity }}
+            </span>
+            {% if not c.has_available_seats %}
+              <span style="font-size:0.75rem; color:#dc2626; margin-left:0.3rem;">Full</span>
+            {% endif %}
+          </td>
           <td>
             {% if c.has_available_seats %}
               <form method="post" action="{{ url_for('enroll', course_id=c.course_id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit">Enroll</button>
+                <button type="submit" style="font-size:0.85rem; padding: 0.3rem 0.8rem;">Enroll</button>
               </form>
             {% else %}
-              <button disabled>Full</button>
+              <button disabled style="font-size:0.85rem; padding: 0.3rem 0.8rem;">Full</button>
             {% endif %}
           </td>
         </tr>
@@ -36,7 +53,9 @@
       </tbody>
     </table>
   {% else %}
-    <p>No courses matched "{{ term }}".</p>
+    <p style="color:#64748b;">No courses matched &ldquo;{{ term }}&rdquo;. Try a different search.</p>
   {% endif %}
+{% else %}
+  <p style="color:#94a3b8; font-size:0.9rem;">Enter a course name, number, or instructor above to search.</p>
 {% endif %}
 {% endblock %}
